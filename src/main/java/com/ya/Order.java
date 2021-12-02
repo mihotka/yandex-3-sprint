@@ -6,14 +6,14 @@ import io.restassured.response.Response;
 import static io.restassured.RestAssured.given;
 
 public class Order extends RestAssuredClient {
-    Response response;
+    int orderId;
     Response cancelResponse ;
     private static final String ORDER_PATH = "api/v1/orders";
 
     @Step
-    public Response createOrder(String color) {
-        return response =
-                given()
+    public int createOrder(String color) {
+      return  orderId =
+                 given()
                         .spec(getBaseSpec())
                         .body("{   " +
                                 "\"firstName\" : \"Miha\", " +
@@ -26,15 +26,19 @@ public class Order extends RestAssuredClient {
                                 "\"comment\": \"Saske\"," +
                                 "\"color\":" +"[" + color + "]}")
                         .when()
-                        .post(ORDER_PATH);
+                        .post(ORDER_PATH)
+                        .then().extract().body().path("track");
     }
 
     @Step
-    public Response cancelCreatedOrder(int orderTrack) {
-        return cancelResponse = given()
+    public void cancelCreatedOrder(int orderTrack) {
+    cancelResponse = (Response) given()
                 .spec(getBaseSpec())
                 .body("{ \"track\": " + orderTrack + " }")
                 .when()
-                .put(ORDER_PATH + "/cancel");
+                .put(ORDER_PATH + "/cancel")
+                .then()
+                .assertThat()
+                .statusCode(200);
     }
 }

@@ -11,6 +11,7 @@ public class CourierLoginTest {
     private CourierClient courierClient;
     private int courierId;
     Courier courier = Courier.getRandom();
+    CourierCredentials courierCredentials = new CourierCredentials(courier.login, courier.password);
 
     @Before
     public void setUp() {
@@ -19,7 +20,7 @@ public class CourierLoginTest {
 
     @After
     public void tearDown() {
-        courierId = courierClient.login(new CourierCredentials(courier.login, courier.password));
+        courierId = courierClient.login(courierCredentials);
         courierClient.delete(courierId);
     }
 

@@ -2,16 +2,20 @@ package com.ya;
 
 import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+
+import static org.hamcrest.Matchers.greaterThan;
+import static org.junit.Assert.assertThat;
 
 
 @RunWith(Parameterized.class)
 public class OrderCreateTest {
         private  final String color;
         Order order = new Order();
-
+        int orderTrack;
     public OrderCreateTest(String color) {
         this.color = color;
     }
@@ -31,12 +35,12 @@ public class OrderCreateTest {
         @Step
         public void orderColorSelectTest() {
             order.createOrder(color);
-            order.response.then().assertThat().statusCode(201);
-            int orderTrack = order.response.then().extract().body().path("track");
-            assert orderTrack > 0;
-
-            order.cancelCreatedOrder(orderTrack);
-            order.cancelResponse.then().assertThat().statusCode(200);
+            assertThat(order.orderId, greaterThan(0));
+        }
+        @After
+        @Step
+        public void cancelOrder() {
+                order.cancelCreatedOrder(orderTrack);
         }
     }
 

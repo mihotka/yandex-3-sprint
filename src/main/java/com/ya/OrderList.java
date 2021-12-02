@@ -8,11 +8,15 @@ public class OrderList extends RestAssuredClient {
     Response response;
     private static final String ORDERLIST_PATH = "api/v1/orders";
 
-    public Response getOrderList() {
-        return response =
-                given()
+    public void getOrderList() {
+        response =
+                (Response) given()
                         .spec(getBaseSpec())
                         .when()
-                        .get(ORDERLIST_PATH);
+                        .get(ORDERLIST_PATH)
+                        .then()
+                        .assertThat()
+                        .statusCode(200)
+                        .extract();
     }
 }
